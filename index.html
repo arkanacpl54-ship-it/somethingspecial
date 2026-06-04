@@ -1,0 +1,797 @@
+mkdir -p /home/claude && cat > /home/claude/index.html << 'ENDOFFILE'
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Special Gift 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --rose:#ff4d8d;
+  --rose-light:#ff8ab8;
+  --rose-glow:rgba(255,77,141,0.35);
+  --gold:#ffd370;
+  --cream:#fff5ee;
+  --deep:#04080f;
+  --mid:#0a1220;
+  --glass:rgba(255,255,255,0.04);
+  --glass-border:rgba(255,255,255,0.08);
+  --transition:cubic-bezier(0.4,0,0.2,1);
+}
+
+html{scroll-behavior:smooth;}
+body{background:var(--deep);color:white;font-family:'Quicksand',sans-serif;overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+#cursor-dot{width:8px;height:8px;background:var(--rose);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--rose),0 0 20px var(--rose-glow);will-change:transform;}
+#cursor-ring{width:32px;height:32px;border:1.5px solid rgba(255,77,141,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:transform 0.15s var(--transition),border-color 0.3s,background 0.3s;will-change:transform;}
+.cursor-trail{position:fixed;width:5px;height:5px;border-radius:50%;background:var(--rose-light);pointer-events:none;z-index:99997;transform:translate(-50%,-50%);opacity:0.4;will-change:transform;}
+
+/* CANVAS */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+#particle-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+
+/* AURORA */
+.aurora{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;overflow:hidden;pointer-events:none;}
+.aurora-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.12;animation:auroraFloat linear infinite;}
+@keyframes auroraFloat{0%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.1);}66%{transform:translate(-20px,20px) scale(0.95);}100%{transform:translate(0,0) scale(1);}}
+
+/* COVER */
+#cover{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(ellipse at 50% 60%, #0d1f12 0%, #04080f 70%);transition:opacity 0.8s var(--transition), transform 0.8s var(--transition);overflow:hidden;}
+#cover::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,77,141,0.03) 50%,transparent 60%);animation:coverShimmer 4s ease-in-out infinite;pointer-events:none;}
+@keyframes coverShimmer{0%,100%{transform:translateX(-100%) rotate(15deg);}50%{transform:translateX(200%) rotate(15deg);}}
+#cover.leaving{opacity:0;transform:scale(1.05);pointer-events:none;}
+.cover-content{display:flex;flex-direction:column;align-items:center;gap:18px;animation:coverIn 1s var(--transition) both;position:relative;z-index:1;}
+@keyframes coverIn{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.cover-tag{font-size:0.68rem;letter-spacing:0.35em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-family:'Quicksand',sans-serif;animation:tagPulse 3s ease-in-out infinite;}
+@keyframes tagPulse{0%,100%{opacity:0.3;}50%{opacity:0.7;}}
+.cover-envelope{font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(255,77,141,0.6));animation:envFloat 3s ease-in-out infinite;cursor:none;}
+@keyframes envFloat{0%,100%{transform:translateY(0) rotate(-3deg) scale(1);}50%{transform:translateY(-12px) rotate(3deg) scale(1.05);}}
+.cover-title{font-family:'Dancing Script',cursive;font-size:clamp(2.2rem,8vw,3.5rem);color:#fff;text-shadow:0 0 30px rgba(255,77,141,0.8), 0 0 60px rgba(255,77,141,0.4);line-height:1.1;text-align:center;}
+.cover-divider{width:60px;height:1px;background:linear-gradient(to right,transparent,var(--rose),transparent);animation:dividerGrow 1.5s ease-out 0.8s both;}
+@keyframes dividerGrow{from{width:0;opacity:0;}to{width:60px;opacity:1;}}
+.cover-sub{font-size:0.78rem;color:rgba(255,255,255,0.45);letter-spacing:0.12em;text-align:center;line-height:1.6;}
+.cover-btn{margin-top:10px;padding:15px 38px;background:transparent;border:1px solid rgba(255,77,141,0.4);border-radius:60px;color:white;font-family:'Quicksand',sans-serif;font-size:0.8rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;cursor:none;position:relative;overflow:hidden;transition:all 0.4s var(--transition);}
+.cover-btn::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.1),transparent);animation:btnScan 2.5s ease-in-out infinite;pointer-events:none;}
+@keyframes btnScan{0%{left:-100%;}100%{left:200%;}}
+.cover-btn:hover{border-color:rgba(255,77,141,0.8);box-shadow:0 0 30px rgba(255,77,141,0.3);transform:translateY(-2px);}
+
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--deep);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:10000;gap:24px;}
+#loading.show{display:flex;}
+.load-heart{font-size:2.5rem;animation:loadPulse 0.8s ease-in-out infinite alternate;}
+@keyframes loadPulse{from{transform:scale(1);filter:drop-shadow(0 0 5px var(--rose));}to{transform:scale(1.3);filter:drop-shadow(0 0 25px var(--rose));}}
+.load-bar-wrap{width:160px;height:2px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.load-bar{height:100%;background:linear-gradient(to right,var(--rose),var(--rose-light));border-radius:2px;animation:loadFill 1.5s var(--transition) forwards;}
+@keyframes loadFill{from{width:0%;}to{width:100%;}}
+.load-text{font-size:0.72rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3);animation:loadDots 1.5s ease-in-out infinite;}
+@keyframes loadDots{0%,100%{opacity:0.3;}50%{opacity:0.8;}}
+
+/* PAGES */
+.page{display:none;min-height:100vh;position:relative;z-index:10;text-align:center;}
+.page.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px 70px;}
+.page-enter{animation:pageIn 0.7s var(--transition) both;}
+@keyframes pageIn{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+#page-flash{position:fixed;inset:0;background:rgba(255,77,141,0.04);z-index:9997;pointer-events:none;opacity:0;transition:opacity 0.15s ease;}
+#page-flash.flash{opacity:1;}
+
+/* PAGE 1 */
+.neon-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,11vw,5rem);font-weight:700;color:#fff;text-shadow:0 0 10px rgba(255,120,180,1),0 0 25px rgba(255,77,141,0.8),0 0 50px rgba(255,77,141,0.5);animation:neonBreath 4s ease-in-out infinite;line-height:1.05;}
+@keyframes neonBreath{0%,100%{text-shadow:0 0 10px rgba(255,120,180,1),0 0 25px rgba(255,77,141,0.8),0 0 50px rgba(255,77,141,0.5);}50%{text-shadow:0 0 5px rgba(255,120,180,0.6),0 0 12px rgba(255,77,141,0.4),0 0 25px rgba(255,77,141,0.2);}}
+.subtitle-line{display:flex;align-items:center;gap:12px;margin:14px 0 0;}
+.subtitle-dash{height:1px;width:40px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.3));}
+.subtitle-dash.r{background:linear-gradient(to left,transparent,rgba(255,255,255,0.3));}
+.subtitle-text{font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+
+/* SCENE */
+.scene{width:100%;max-width:420px;position:relative;height:300px;margin:30px auto 0;}
+.ff{position:absolute;width:5px;height:5px;border-radius:50%;background:#ffe77a;box-shadow:0 0 8px #ffe77a, 0 0 16px #ffcc30;animation:ffMove ease-in-out infinite alternate;}
+@keyframes ffMove{from{transform:translate(0,0);opacity:0.2;}to{transform:translate(var(--tx),var(--ty));opacity:1;}}
+.flower{position:absolute;bottom:62px;display:flex;flex-direction:column;align-items:center;transform-origin:bottom center;animation:sway ease-in-out infinite alternate, flowerGrow 1s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes sway{from{transform:rotate(calc(var(--lean)*-1deg));}to{transform:rotate(var(--lean,3)deg);}}
+@keyframes flowerGrow{from{transform:scaleY(0);transform-origin:bottom;}to{transform:scaleY(1);transform-origin:bottom;}}
+.petals{position:relative;margin-bottom:-6px;}
+.petal{position:absolute;border-radius:50% 50% 50% 50% / 65% 65% 35% 35%;transform-origin:50% 100%;top:50%;left:50%;}
+.flower-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;z-index:2;box-shadow:0 0 12px rgba(255,255,255,0.5);animation:centerPulse 2s ease-in-out infinite;}
+@keyframes centerPulse{0%,100%{box-shadow:0 0 12px rgba(255,255,255,0.5);}50%{box-shadow:0 0 20px rgba(255,255,255,0.9);}}
+.stem{background:linear-gradient(to top,#2d5a2d,#4a8c4a);border-radius:3px;margin:0 auto;}
+.leaf{position:absolute;border-radius:50%;}
+.grass-row{position:absolute;bottom:0;left:0;right:0;height:90px;overflow:hidden;}
+.gb{position:absolute;bottom:0;border-radius:60% 60% 0 0 / 80% 80% 0 0;transform-origin:bottom center;animation:sway ease-in-out infinite alternate;}
+.grass-mound{position:absolute;bottom:0;border-radius:50% 50% 0 0;background:#112211;}
+.ground-glow{position:absolute;bottom:0;left:0;right:0;height:30px;background:radial-gradient(ellipse at 50% 100%, rgba(100,200,100,0.06), transparent 70%);pointer-events:none;}
+
+/* OPEN BTN */
+.open-btn{position:relative;padding:15px 36px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);border-radius:60px;color:white;font-family:'Quicksand',sans-serif;font-size:0.78rem;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;cursor:none;overflow:hidden;backdrop-filter:blur(12px);transition:all 0.4s var(--transition);z-index:20;margin-top:32px;animation:btnFloat 3s ease-in-out infinite;}
+@keyframes btnFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.open-btn:hover{border-color:rgba(255,77,141,0.6);box-shadow:0 0 25px rgba(255,77,141,0.25);transform:translateY(-3px);animation:none;}
+
+/* PAGE 2 */
+#page2{justify-content:flex-start;padding-top:55px;gap:22px;}
+.page-heading{font-family:'Dancing Script',cursive;font-size:clamp(2rem,8vw,3rem);color:#fff;text-shadow:0 0 20px rgba(255,77,141,0.6);}
+.letter-card{width:100%;max-width:480px;background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;padding:28px 24px 28px 36px;text-align:left;backdrop-filter:blur(16px);position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);}
+.letter-card::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:1.5px;background:linear-gradient(to bottom,transparent 5%,rgba(255,77,141,0.35) 30%,rgba(255,77,141,0.35) 70%,transparent 95%);}
+#typing-text{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;line-height:2;color:rgba(255,255,255,0.82);white-space:pre-wrap;min-height:120px;}
+.blink-cursor{display:inline-block;width:2px;height:1em;background:var(--rose);vertical-align:middle;margin-left:2px;animation:blink 0.6s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.progress-dots{display:flex;gap:8px;}
+.pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.4s var(--transition);}
+.pdot.lit{background:var(--rose);box-shadow:0 0 8px var(--rose);transform:scale(1.3);}
+
+/* PAGE 3 */
+#page3{gap:20px;}
+.gallery-wrap{position:relative;width:85%;max-width:320px;}
+.gallery-frame{border-radius:22px;overflow:hidden;border:1px solid rgba(255,77,141,0.2);box-shadow:0 0 40px rgba(255,77,141,0.15),0 20px 50px rgba(0,0,0,0.5);background:#111;}
+.gallery-frame img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover;transition:opacity 0.35s var(--transition);}
+.gallery-frame img.fade{opacity:0;}
+.gallery-caption{padding:12px 16px;font-size:0.82rem;font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(255,255,255,0.65);background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);text-align:center;letter-spacing:0.05em;}
+.gallery-counter{position:absolute;top:12px;right:14px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;font-size:0.68rem;letter-spacing:0.1em;backdrop-filter:blur(8px);color:rgba(255,255,255,0.6);}
+.nav-row{display:flex;gap:14px;align-items:center;}
+.nav-btn{width:50px;height:50px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-border);color:white;font-size:1rem;cursor:none;transition:all 0.3s var(--transition);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.nav-btn:hover{background:rgba(255,77,141,0.15);border-color:rgba(255,77,141,0.4);transform:scale(1.08);}
+.nav-btn:active{transform:scale(0.92);}
+
+/* PAGE 4 */
+#page4{gap:0;justify-content:flex-start;padding-top:0;padding-bottom:0;overflow:hidden;}
+
+#closing-screen{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;background:#04080f;overflow:hidden;}
+#closing-screen.active{display:flex;}
+#closing-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);pointer-events:none;z-index:1;}
+
+.closing-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle, rgba(255,77,141,0.08) 0%, transparent 70%);animation:closingGlowPulse 4s ease-in-out infinite;pointer-events:none;}
+@keyframes closingGlowPulse{0%,100%{transform:scale(1);opacity:0.5;}50%{transform:scale(1.3);opacity:1;}}
+
+.closing-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0;max-width:340px;width:100%;padding:20px;}
+.closing-para{opacity:0;transform:translateY(28px);transition:opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);text-align:center;margin-bottom:22px;}
+.closing-para.visible{opacity:1;transform:translateY(0);}
+.closing-para.para-main{font-family:'Cormorant Garamond',serif;font-size:clamp(0.9rem,3.5vw,1.08rem);font-weight:300;line-height:1.95;color:rgba(255,255,255,0.75);}
+.closing-para.para-highlight{font-family:'Dancing Script',cursive;font-size:clamp(1.3rem,5vw,1.7rem);color:#fff;text-shadow:0 0 20px rgba(255,77,141,0.7);line-height:1.4;margin-bottom:28px;}
+.closing-para.para-final{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1rem,4vw,1.3rem);color:rgba(255,200,220,0.9);text-shadow:0 0 15px rgba(255,77,141,0.5);line-height:1.7;}
+.closing-para.para-emotion{font-family:'Cormorant Garamond',serif;font-size:clamp(0.85rem,3vw,0.98rem);font-style:italic;font-weight:300;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:18px;}
+.closing-line{opacity:0;width:0;height:1px;background:linear-gradient(to right, transparent, rgba(255,77,141,0.5), transparent);margin:10px auto 24px;transition:opacity 0.8s ease, width 1.2s cubic-bezier(0.25,0.46,0.45,0.94);}
+.closing-line.visible{opacity:1;width:120px;}
+.closing-badge{opacity:0;transform:scale(0.7);transition:opacity 1s ease, transform 1s cubic-bezier(0.34,1.56,0.64,1);display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border:1px solid rgba(255,77,141,0.3);border-radius:40px;background:rgba(255,77,141,0.06);font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.45);backdrop-filter:blur(8px);margin-top:8px;}
+.closing-badge.visible{opacity:1;transform:scale(1);}
+.closing-scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);animation:hintFade 2s ease-in-out infinite;z-index:3;opacity:0;transition:opacity 1s ease;}
+.closing-scroll-hint.show{opacity:1;}
+@keyframes hintFade{0%,100%{opacity:0.2;}50%{opacity:0.6;}}
+
+.final-content-wrap{display:none;flex-direction:column;align-items:center;gap:22px;padding:40px 20px 70px;min-height:100vh;justify-content:center;}
+.final-content-wrap.show{display:flex;}
+.final-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,6vw,2.4rem);font-style:italic;color:#fff;text-shadow:0 0 20px rgba(255,77,141,0.5);}
+.final-frame{width:85%;max-width:300px;border-radius:24px;overflow:hidden;border:1px solid rgba(255,77,141,0.25);box-shadow:0 0 50px rgba(255,77,141,0.2),0 25px 60px rgba(0,0,0,0.6);}
+.final-frame img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover;}
+.final-frame-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.5));}
+.final-quote{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;font-weight:300;color:rgba(255,255,255,0.7);line-height:1.9;max-width:300px;}
+.forever-badge{display:inline-flex;align-items:center;gap:10px;padding:10px 22px;border:1px solid rgba(255,77,141,0.3);border-radius:40px;background:rgba(255,77,141,0.07);font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.5);backdrop-filter:blur(8px);}
+
+/* SHARED BTN */
+.btn{padding:13px 30px;background:var(--glass);border:1px solid var(--glass-border);border-radius:50px;color:white;font-family:'Quicksand',sans-serif;font-weight:600;font-size:0.8rem;letter-spacing:0.12em;cursor:none;transition:all 0.3s var(--transition);backdrop-filter:blur(8px);}
+.btn:hover:not(:disabled){background:rgba(255,77,141,0.15);border-color:rgba(255,77,141,0.4);box-shadow:0 0 20px rgba(255,77,141,0.2);transform:translateY(-2px);}
+.btn:disabled{opacity:0.25;cursor:default;}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(255,77,141,0.15);border:1px solid rgba(255,77,141,0.3);border-radius:30px;padding:10px 22px;font-size:0.78rem;letter-spacing:0.1em;color:rgba(255,255,255,0.7);backdrop-filter:blur(12px);z-index:9990;opacity:0;transition:all 0.4s var(--transition);pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* RIPPLE */
+.ripple-el{position:fixed;border-radius:50%;pointer-events:none;z-index:9990;animation:rippleOut 0.6s var(--transition) forwards;}
+@keyframes rippleOut{from{width:0;height:0;opacity:0.6;transform:translate(-50%,-50%);}to{width:80px;height:80px;opacity:0;transform:translate(-50%,-50%);}}
+
+/* FLOATING HEARTS */
+#hearts-layer{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
+.fh{position:absolute;bottom:-30px;font-size:14px;opacity:0;animation:fhRise linear forwards;}
+@keyframes fhRise{0%{transform:translateY(0) rotate(-10deg);opacity:0.7;}50%{opacity:0.5;}100%{transform:translateY(-110vh) rotate(15deg);opacity:0;}}
+
+/* WIPE */
+#wipe{position:fixed;inset:0;background:radial-gradient(circle at 50% 50%, rgba(255,77,141,0.15) 0%, transparent 100%);z-index:9996;pointer-events:none;opacity:0;transform:scale(0);transition:transform 0.5s ease-out,opacity 0.5s ease-out;}
+#wipe.active{transform:scale(3);opacity:1;}
+
+/* LOVE COUNTER */
+#love-counter{position:fixed;bottom:16px;right:16px;font-size:0.62rem;letter-spacing:0.12em;color:rgba(255,255,255,0.2);z-index:9990;pointer-events:none;font-family:'Quicksand',sans-serif;}
+
+/* FALLING PETAL */
+.falling-petal{position:fixed;top:-20px;font-size:12px;pointer-events:none;z-index:3;opacity:0;animation:petalFall linear forwards;}
+@keyframes petalFall{0%{opacity:0;transform:translateY(0) rotate(0deg) translateX(0);}10%{opacity:0.8;}90%{opacity:0.4;}100%{opacity:0;transform:translateY(110vh) rotate(720deg) translateX(var(--drift));}}
+
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<div class="aurora">
+  <div class="aurora-blob" style="width:600px;height:600px;background:radial-gradient(circle,#1a0030,transparent 70%);top:-10%;left:-15%;animation-duration:18s;"></div>
+  <div class="aurora-blob" style="width:500px;height:500px;background:radial-gradient(circle,#00201a,transparent 70%);top:20%;right:-10%;animation-duration:22s;animation-delay:-8s;"></div>
+  <div class="aurora-blob" style="width:400px;height:400px;background:radial-gradient(circle,#200010,transparent 70%);bottom:10%;left:20%;animation-duration:15s;animation-delay:-5s;"></div>
+</div>
+
+<canvas id="bg-canvas"></canvas>
+<canvas id="particle-canvas"></canvas>
+<div id="hearts-layer"></div>
+<div id="wipe"></div>
+<div id="page-flash"></div>
+<div id="love-counter">🩷 0 clicks of love</div>
+
+<div id="cover">
+  <div class="cover-content">
+    <div class="cover-tag">Sebuah Kejutan Untukmu</div>
+    <div class="cover-envelope" id="cover-env">💌</div>
+    <div class="cover-title">Surat<br>Untuk Kamu</div>
+    <div class="cover-divider"></div>
+    <div class="cover-sub">Tap untuk membuka<br>something special ✨</div>
+    <button class="cover-btn" onclick="openCover()">Buka Sekarang</button>
+  </div>
+</div>
+
+<div id="loading">
+  <div class="load-heart">🩷</div>
+  <div class="load-bar-wrap"><div class="load-bar"></div></div>
+  <div class="load-text">Opening your gift...</div>
+</div>
+
+<audio id="bgm" loop><source src="music.mp3" type="audio/mpeg"></audio>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+  <div class="neon-title">Special<br>Gift</div>
+  <div class="subtitle-line">
+    <div class="subtitle-dash"></div>
+    <div class="subtitle-text">To someone special in my life ✨</div>
+    <div class="subtitle-dash r"></div>
+  </div>
+
+  <div class="scene" id="scene1">
+    <div class="ff" style="left:12%;bottom:160px;--tx:25px;--ty:-35px;animation-duration:2.8s;"></div>
+    <div class="ff" style="left:68%;bottom:140px;--tx:-18px;--ty:-28px;animation-duration:3.4s;animation-delay:-1s;"></div>
+    <div class="ff" style="left:40%;bottom:180px;--tx:30px;--ty:-50px;animation-duration:2.2s;animation-delay:-2s;"></div>
+    <div class="ff" style="left:82%;bottom:155px;--tx:-22px;--ty:-30px;animation-duration:4s;animation-delay:-0.5s;"></div>
+    <div class="ff" style="left:28%;bottom:145px;--tx:40px;--ty:-45px;animation-duration:3.1s;animation-delay:-1.5s;"></div>
+
+    <!-- FLOWER 1 -->
+    <div class="flower" style="left:14%;--lean:3;animation-duration:2.8s;animation-delay:0.1s;">
+      <div class="petals" style="width:46px;height:46px;">
+        <div class="petal" style="width:16px;height:24px;background:linear-gradient(to top,#e8b820,#f5d040);transform:translate(-50%,-100%) rotate(0deg) translateY(10px);"></div>
+        <div class="petal" style="width:16px;height:24px;background:linear-gradient(to top,#e8b820,#f5d040);transform:translate(-50%,-100%) rotate(72deg) translateY(10px);"></div>
+        <div class="petal" style="width:16px;height:24px;background:linear-gradient(to top,#e8b820,#f5d040);transform:translate(-50%,-100%) rotate(144deg) translateY(10px);"></div>
+        <div class="petal" style="width:16px;height:24px;background:linear-gradient(to top,#e8b820,#f5d040);transform:translate(-50%,-100%) rotate(216deg) translateY(10px);"></div>
+        <div class="petal" style="width:16px;height:24px;background:linear-gradient(to top,#e8b820,#f5d040);transform:translate(-50%,-100%) rotate(288deg) translateY(10px);"></div>
+        <div class="flower-center" style="width:13px;height:13px;background:radial-gradient(circle,#fff8cc,#ffe066);"></div>
+      </div>
+      <div class="stem" style="width:5px;height:72px;"></div>
+      <div class="leaf" style="width:18px;height:10px;background:#3a7a3a;left:-16px;top:-28px;transform:rotate(-35deg);"></div>
+    </div>
+
+    <!-- FLOWER 2 -->
+    <div class="flower" style="left:44%;--lean:2;animation-duration:3.2s;animation-delay:0.2s;">
+      <div class="petals" style="width:58px;height:58px;">
+        <div class="petal" style="width:21px;height:32px;background:linear-gradient(to top,#c0245a,#e84080);transform:translate(-50%,-100%) rotate(0deg) translateY(12px);"></div>
+        <div class="petal" style="width:21px;height:32px;background:linear-gradient(to top,#c0245a,#e84080);transform:translate(-50%,-100%) rotate(72deg) translateY(12px);"></div>
+        <div class="petal" style="width:21px;height:32px;background:linear-gradient(to top,#c0245a,#e84080);transform:translate(-50%,-100%) rotate(144deg) translateY(12px);"></div>
+        <div class="petal" style="width:21px;height:32px;background:linear-gradient(to top,#c0245a,#e84080);transform:translate(-50%,-100%) rotate(216deg) translateY(12px);"></div>
+        <div class="petal" style="width:21px;height:32px;background:linear-gradient(to top,#c0245a,#e84080);transform:translate(-50%,-100%) rotate(288deg) translateY(12px);"></div>
+        <div class="flower-center" style="width:17px;height:17px;background:radial-gradient(circle,#fff0f5,#ffd0e0);"></div>
+      </div>
+      <div class="stem" style="width:6px;height:105px;"></div>
+      <div class="leaf" style="width:22px;height:12px;background:#3a7a3a;left:-20px;top:-42px;transform:rotate(-38deg);"></div>
+      <div class="leaf" style="width:22px;height:12px;background:#3a7a3a;right:-20px;top:-60px;transform:rotate(38deg) scaleX(-1);"></div>
+    </div>
+
+    <!-- FLOWER 3 -->
+    <div class="flower" style="left:70%;--lean:3.5;animation-duration:2.5s;animation-delay:0.15s;">
+      <div class="petals" style="width:52px;height:52px;">
+        <div class="petal" style="width:19px;height:29px;background:linear-gradient(to top,#c04030,#e86050);transform:translate(-50%,-100%) rotate(0deg) translateY(11px);"></div>
+        <div class="petal" style="width:19px;height:29px;background:linear-gradient(to top,#c04030,#e86050);transform:translate(-50%,-100%) rotate(72deg) translateY(11px);"></div>
+        <div class="petal" style="width:19px;height:29px;background:linear-gradient(to top,#c04030,#e86050);transform:translate(-50%,-100%) rotate(144deg) translateY(11px);"></div>
+        <div class="petal" style="width:19px;height:29px;background:linear-gradient(to top,#c04030,#e86050);transform:translate(-50%,-100%) rotate(216deg) translateY(11px);"></div>
+        <div class="petal" style="width:19px;height:29px;background:linear-gradient(to top,#c04030,#e86050);transform:translate(-50%,-100%) rotate(288deg) translateY(11px);"></div>
+        <div class="flower-center" style="width:14px;height:14px;background:radial-gradient(circle,#fff5f0,#ffd5c5);"></div>
+      </div>
+      <div class="stem" style="width:5px;height:85px;"></div>
+      <div class="leaf" style="width:18px;height:10px;background:#3a7a3a;right:-16px;top:-32px;transform:rotate(32deg) scaleX(-1);"></div>
+    </div>
+
+    <div class="grass-row">
+      <div class="grass-mound" style="width:120px;height:70px;left:-10px;"></div>
+      <div class="grass-mound" style="width:140px;height:65px;right:-10px;"></div>
+      <div class="grass-mound" style="width:90px;height:55px;left:22%;"></div>
+      <div class="grass-mound" style="width:100px;height:60px;right:18%;"></div>
+      <div class="gb" style="width:12px;height:58px;left:4%;background:linear-gradient(to top,#1a4a1a,#3c8c3c);--lean:4;animation-duration:2.3s;"></div>
+      <div class="gb" style="width:10px;height:44px;left:9%;background:linear-gradient(to top,#1a4a1a,#2e7a2e);--lean:3;animation-duration:2.8s;animation-delay:-0.4s;"></div>
+      <div class="gb" style="width:14px;height:65px;left:16%;background:linear-gradient(to top,#1a4a1a,#3a8a3a);--lean:5;animation-duration:2.1s;animation-delay:-0.8s;"></div>
+      <div class="gb" style="width:10px;height:42px;left:24%;background:linear-gradient(to top,#1a4a1a,#2e7a2e);--lean:3;animation-duration:3.1s;animation-delay:-1.2s;"></div>
+      <div class="gb" style="width:13px;height:60px;left:33%;background:linear-gradient(to top,#1a4a1a,#3c8c3c);--lean:4;animation-duration:2.6s;animation-delay:-0.2s;"></div>
+      <div class="gb" style="width:11px;height:50px;left:55%;background:linear-gradient(to top,#1a4a1a,#3a8a3a);--lean:3;animation-duration:2.9s;animation-delay:-0.6s;"></div>
+      <div class="gb" style="width:15px;height:68px;left:62%;background:linear-gradient(to top,#1a4a1a,#3c8c3c);--lean:5;animation-duration:2.2s;animation-delay:-1s;"></div>
+      <div class="gb" style="width:10px;height:45px;left:72%;background:linear-gradient(to top,#1a4a1a,#2e7a2e);--lean:3;animation-duration:3.3s;animation-delay:-0.3s;"></div>
+      <div class="gb" style="width:13px;height:55px;left:80%;background:linear-gradient(to top,#1a4a1a,#3a8a3a);--lean:4;animation-duration:2.4s;animation-delay:-0.7s;"></div>
+      <div class="gb" style="width:10px;height:48px;left:88%;background:linear-gradient(to top,#1a4a1a,#2e7a2e);--lean:3;animation-duration:2.7s;animation-delay:-1.4s;"></div>
+      <div class="gb" style="width:12px;height:52px;left:95%;background:linear-gradient(to top,#1a4a1a,#3c8c3c);--lean:4;animation-duration:3s;animation-delay:-0.5s;"></div>
+    </div>
+    <div class="ground-glow"></div>
+  </div>
+
+  <button class="open-btn" onclick="goPage(2);startTyping()">OPEN LETTER &nbsp;→</button>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+  <div class="page-heading">For Dede Beby ❤️</div>
+  <div class="letter-card">
+    <div id="typing-text"></div><span class="blink-cursor" id="bcursor"></span>
+  </div>
+  <div class="progress-dots">
+    <div class="pdot" id="pd1"></div>
+    <div class="pdot" id="pd2"></div>
+    <div class="pdot" id="pd3"></div>
+    <div class="pdot" id="pd4"></div>
+    <div class="pdot" id="pd5"></div>
+  </div>
+  <button class="btn" id="nextBtn2" onclick="goPage(3)" disabled>Next ›</button>
+</div>
+
+<!-- PAGE 3 -->
+<div id="page3" class="page">
+  <div class="page-heading">BebyDiniArahma 🌸</div>
+  <div class="gallery-wrap">
+    <div class="gallery-frame">
+      <img id="gImg" src="foto1.jpg" alt="memory">
+      <div class="gallery-caption" id="gCap">Wonderful Day ♡</div>
+    </div>
+    <div class="gallery-counter" id="gCounter"><span id="gNum">1</span> / 5</div>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn" onclick="prevImg()">◀</button>
+    <button class="nav-btn" onclick="nextImg()">▶</button>
+  </div>
+  <button class="btn" onclick="startClosingAnim()">Next ›</button>
+</div>
+
+<!-- PAGE 4 -->
+<div id="page4" class="page">
+  <div id="closing-screen" class="active">
+    <div class="closing-glow"></div>
+    <div class="closing-inner" id="closing-inner">
+      <div class="closing-para para-main" id="cp0">Terima kasih.</div>
+      <div class="closing-para para-main" id="cp1">Terima kasih sudah hadir di hidupku, bahkan tanpa kamu sadari kamu membawa banyak hal baik buat aku.</div>
+      <div class="closing-line" id="cl1"></div>
+      <div class="closing-para para-main" id="cp2">Mungkin kamu nggak pernah merasa kamu spesial, tapi di mataku kamu punya tempat yang nggak bisa diganti orang lain. Cara kamu hadir, cara kamu ngobrol, cara kamu jadi diri kamu sendiri… itu semua sederhana tapi berarti.</div>
+      <div class="closing-para para-emotion" id="cp3">Aku bersyukur pernah kenal kamu, pernah punya kesempatan buat ngobrol sama kamu, ketawa sama kamu, dan ngerasain hal-hal kecil yang ternyata ninggalin kesan besar.</div>
+      <div class="closing-line" id="cl2"></div>
+      <div class="closing-para para-main" id="cp4">Kalau suatu hari kita jadi jauh, aku tetap bakal inget kamu sebagai salah satu bagian penting di hidupku. Bukan karena sesuatu yang besar, tapi justru karena hal-hal kecil yang kamu lakukan tanpa sadar.</div>
+      <div class="closing-para para-emotion" id="cp5">Terima kasih sudah jadi alasan kenapa beberapa hari terasa lebih ringan. Terima kasih sudah jadi seseorang yang diam-diam aku doakan hal baiknya.</div>
+      <div class="closing-line" id="cl3"></div>
+      <div class="closing-para para-highlight" id="cp6">Aku nggak tahu masa depan bakal gimana, tapi untuk sekarang…</div>
+      <div class="closing-para para-final" id="cp7">Kehadiran kamu itu berarti.<br>Lebih dari yang mungkin kamu kira.</div>
+      <div class="closing-para para-emotion" id="cp8" style="margin-top:4px;">Dan itu cukup buat aku. 🩷</div>
+      <div class="closing-badge" id="cbadge">🩷 &nbsp;Forever &amp; Always&nbsp; 🩷</div>
+    </div>
+    <div class="closing-scroll-hint" id="scroll-hint">scroll to explore ↓</div>
+  </div>
+
+  <div class="final-content-wrap" id="final-content">
+    <div class="final-title">Arka Beby &amp; Dede Beby</div>
+    <div class="final-frame">
+      <img src="foto5.jpg" alt="us">
+      <div class="final-frame-overlay"></div>
+    </div>
+    <div class="final-quote">And until today and forever,<br>you are still my favorite person<br>number one. 🩷</div>
+    <div class="forever-badge">🩷 &nbsp;Forever &amp; Always&nbsp; 🩷</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══ CURSOR (pakai CSS transform, bukan left/top di loop) ══ */
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+
+// DIKURANGI dari 8 → 5 trail
+const TRAIL_COUNT = 5;
+const trails = [];
+for(let i=0;i<TRAIL_COUNT;i++){
+  const t = document.createElement('div');
+  t.className='cursor-trail';
+  t.style.opacity = (1 - i/TRAIL_COUNT)*0.35;
+  t.style.width = t.style.height = (5 - i*0.6)+'px';
+  document.body.appendChild(t);
+  trails.push({el:t, x:0, y:0});
+}
+
+document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; });
+
+function animCursor(){
+  // dot langsung ke posisi mouse
+  dot.style.left = mx+'px';
+  dot.style.top  = my+'px';
+
+  // ring smooth follow
+  rx += (mx-rx)*0.12;
+  ry += (my-ry)*0.12;
+  ring.style.left = rx+'px';
+  ring.style.top  = ry+'px';
+
+  // trail
+  trails[0].x += (mx - trails[0].x)*0.3;
+  trails[0].y += (my - trails[0].y)*0.3;
+  for(let i=1;i<TRAIL_COUNT;i++){
+    trails[i].x += (trails[i-1].x - trails[i].x)*0.4;
+    trails[i].y += (trails[i-1].y - trails[i].y)*0.4;
+    trails[i].el.style.left = trails[i].x+'px';
+    trails[i].el.style.top  = trails[i].y+'px';
+  }
+  trails[0].el.style.left = trails[0].x+'px';
+  trails[0].el.style.top  = trails[0].y+'px';
+
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+document.querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('mouseenter',()=>{
+    ring.style.transform='translate(-50%,-50%) scale(1.8)';
+    ring.style.borderColor='rgba(255,77,141,0.8)';
+  });
+  btn.addEventListener('mouseleave',()=>{
+    ring.style.transform='translate(-50%,-50%) scale(1)';
+    ring.style.borderColor='rgba(255,77,141,0.5)';
+  });
+});
+
+/* click sparkle */
+document.addEventListener('click',e=>{
+  const r=document.createElement('div');
+  r.className='ripple-el';
+  r.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;border:1.5px solid rgba(255,77,141,0.5);`;
+  document.body.appendChild(r);
+  setTimeout(()=>r.remove(),600);
+
+  loveCount++;
+  const lc=document.getElementById('love-counter');
+  lc.textContent=`🩷 ${loveCount} clicks of love`;
+});
+
+let loveCount=0;
+
+/* ══ STARS CANVAS — pakai offscreen, rerender hanya saat resize ══ */
+const bgC=document.getElementById('bg-canvas');
+const bgX=bgC.getContext('2d');
+
+function resizeBg(){bgC.width=innerWidth;bgC.height=innerHeight;}
+resizeBg();
+window.addEventListener('resize',resizeBg);
+
+// DIKURANGI dari 200+30 → 120 bintang
+const STARS=Array.from({length:120},()=>({
+  x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+  r:Math.random()*1.4+0.2,
+  a:Math.random(), s:Math.random()*0.005+0.002, d:Math.random()>0.5?1:-1
+}));
+
+function drawBg(){
+  bgX.clearRect(0,0,bgC.width,bgC.height);
+  for(let i=0;i<STARS.length;i++){
+    const s=STARS[i];
+    s.a+=s.s*s.d;
+    if(s.a>1||s.a<0) s.d*=-1;
+    bgX.beginPath();
+    bgX.arc(s.x,s.y,s.r,0,Math.PI*2);
+    bgX.fillStyle=`rgba(255,255,255,${s.a})`;
+    bgX.fill();
+  }
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+/* ══ PARTICLE CANVAS — shooting stars saja, rose dust DIHAPUS ══ */
+const pC=document.getElementById('particle-canvas');
+const pX=pC.getContext('2d');
+function resizeP(){pC.width=innerWidth;pC.height=innerHeight;}
+resizeP();
+window.addEventListener('resize',resizeP);
+
+let shooters=[];
+
+function spawnShooter(){
+  if(shooters.length>6) return; // max 6 sekaligus
+  shooters.push({
+    x:Math.random()*innerWidth*0.7, y:Math.random()*innerHeight*0.4,
+    vx:4+Math.random()*4, vy:2+Math.random()*3,
+    life:1, len:60+Math.random()*60
+  });
+}
+setInterval(spawnShooter,4000);
+
+function drawParticles(){
+  pX.clearRect(0,0,pC.width,pC.height);
+  shooters=shooters.filter(s=>{
+    s.x+=s.vx; s.y+=s.vy; s.life-=0.025;
+    if(s.life<=0) return false;
+    const grad=pX.createLinearGradient(s.x-s.vx*s.len/6,s.y-s.vy*s.len/6,s.x,s.y);
+    grad.addColorStop(0,'rgba(255,255,255,0)');
+    grad.addColorStop(1,`rgba(255,200,220,${s.life*0.8})`);
+    pX.beginPath();
+    pX.moveTo(s.x-s.vx*s.len/6,s.y-s.vy*s.len/6);
+    pX.lineTo(s.x,s.y);
+    pX.strokeStyle=grad;
+    pX.lineWidth=1.5;
+    pX.stroke();
+    return true;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ══ FLOATING HEARTS — dikurangi frekuensi ══ */
+const HL=document.getElementById('hearts-layer');
+const heartEmojis=['🩷','❤️','💗','💕','🌸'];
+
+function spawnHeart(){
+  if(HL.children.length>15) return; // max 15 sekaligus
+  const h=document.createElement('div');
+  h.className='fh';
+  h.textContent=heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+  h.style.left=Math.random()*100+'%';
+  h.style.fontSize=(10+Math.random()*14)+'px';
+  const d=7+Math.random()*7;
+  h.style.animationDuration=d+'s';
+  HL.appendChild(h);
+  setTimeout(()=>h.remove(),d*1000);
+}
+setInterval(spawnHeart,2500); // dikurangi dari 1400ms
+setTimeout(spawnHeart,500);
+
+/* ══ FALLING PETALS — dikurangi frekuensi ══ */
+const petalEmojis=['🌸','🌺','🌷'];
+function spawnFallingPetal(){
+  const p=document.createElement('div');
+  p.className='falling-petal';
+  p.textContent=petalEmojis[Math.floor(Math.random()*petalEmojis.length)];
+  p.style.left=Math.random()*100+'%';
+  const d=6+Math.random()*8;
+  p.style.animationDuration=d+'s';
+  p.style.fontSize=(8+Math.random()*10)+'px';
+  p.style.setProperty('--drift',(Math.random()-0.5)*120+'px');
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),(d+0.5)*1000);
+}
+setInterval(spawnFallingPetal,4000); // dikurangi dari 2200ms
+
+/* ══ COVER ══ */
+function openCover(){
+  const cv=document.getElementById('cover');
+  const ld=document.getElementById('loading');
+  const wipe=document.getElementById('wipe');
+  wipe.classList.add('active');
+  setTimeout(()=>{ wipe.classList.remove('active'); wipe.style.opacity=0; },600);
+  cv.classList.add('leaving');
+  setTimeout(()=>{
+    cv.style.display='none';
+    ld.classList.add('show');
+    setTimeout(()=>{
+      ld.classList.remove('show');
+      ld.style.display='none';
+      document.getElementById('bgm').play().catch(()=>{});
+      showToast('💌 Welcome, Dede Beby!');
+    },1600);
+  },700);
+}
+
+/* ══ PAGES ══ */
+function goPage(n){
+  const flash=document.getElementById('page-flash');
+  flash.classList.add('flash');
+  setTimeout(()=>flash.classList.remove('flash'),200);
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active','page-enter'));
+  const pg=document.getElementById('page'+n);
+  pg.classList.add('active');
+  requestAnimationFrame(()=>pg.classList.add('page-enter'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ══ TYPING ══ */
+const LETTER=`I don't know if you believe it or not, but lately there's one person who's been on my mind all the time. And that person is you🩷🩷
+
+hal-hal kecil yang berhubungan dengan kamu selalu berhasil membuat hariku jadi lebih baik.
+
+Satu chat dari kamu bisa bikin aku salting setiap saat
+Satu cerita dari kamu bisa bikin aku kepikiran seharian
+
+Bahkan saat aku sedang sibuk, aku pasti kepikiran,
+"Dia lagi ngapain ya sekarang?"
+
+Aku nggak bilang kalau aku selalu membutuhkan kamu setiap saat.
+Tapi entah kenapa, hari-hariku terasa lebih menyenangkan ketika ada kamu di dalamnya.
+
+I love the way you tell stories
+I love the way you laugh
+I love how you can make a simple conversation feel so precious.
+
+Dan mungkin yang paling aku suka adalah fakta bahwa tanpa sadar, kamu sudah menjadi seseorang yang sangat aku pedulikan, satu satunya orang yang aku prioritaskan.
+
+Aku nggak berharap kamu harus membalas perasaan ini sekarang.
+Aku cuma ingin kamu tahu bahwa ada seseorang di sini yang benar-benar senang saat melihat kamu bahagia.
+
+seseorang yang akan selalu menunggu kedatanganmu
+Seseorang yang selalu menunggu pesan darimu
+Seseorang yang diam-diam menyimpan banyak rasa sayang untukmu
+
+Karena dari sekian banyak orang yang aku temui, kamu adalah salah satu orang yang paling ingin aku kenal lebih jauh.
+
+Dan kalau suatu hari kamu bertanya kenapa aku begitu perhatian sama kamu...
+
+The answer is simple
+
+Because I love you
+
+Maybe not in the perfect way
+Maybe not with enough courage to say it directly
+
+But the feeling is there
+
+Dan sampai hari ini hingga seterusnya, kamu masih menjadi orang favoritku nomor satuu🩷🩷`;
+
+let tIdx=0, tStarted=false;
+const dots=['pd1','pd2','pd3','pd4','pd5'];
+
+function startTyping(){
+  if(tStarted) return;
+  tStarted=true;
+  document.getElementById(dots[0]).classList.add('lit');
+  typeStep();
+}
+
+function typeStep(){
+  if(tIdx<LETTER.length){
+    document.getElementById('typing-text').innerHTML+=LETTER[tIdx];
+    tIdx++;
+    const pct=tIdx/LETTER.length;
+    dots.forEach((id,i)=>{ if(pct>=(i+1)/dots.length) document.getElementById(id).classList.add('lit'); });
+    const delay=LETTER[tIdx-1]==='\n'?80:LETTER[tIdx-1]==='.'?60:26;
+    setTimeout(typeStep,delay);
+  } else {
+    document.getElementById('bcursor').style.display='none';
+    document.getElementById('nextBtn2').disabled=false;
+    showToast('💌 Read completely!');
+  }
+}
+
+/* ══ GALLERY ══ */
+const IMGS=['foto1.jpg','foto2.jpg','foto3.jpg','foto4.jpg','foto5.jpg'];
+const CAPS=['Wonderful Day ♡','Always Amazing ✨','My Favorite 🩷','So Lovely 💫','Best Moment 🌸'];
+let gCur=0;
+
+function showGallery(){
+  const img=document.getElementById('gImg');
+  const cap=document.getElementById('gCap');
+  img.classList.add('fade');
+  setTimeout(()=>{
+    img.src=IMGS[gCur];
+    cap.textContent=CAPS[gCur];
+    document.getElementById('gNum').textContent=gCur+1;
+    img.classList.remove('fade');
+  },200);
+}
+function nextImg(){ gCur=(gCur+1)%IMGS.length; showGallery(); }
+function prevImg(){ gCur=(gCur-1+IMGS.length)%IMGS.length; showGallery(); }
+
+/* ══ CLOSING ANIM ══ */
+const closingSequence=[
+  {type:'para',id:'cp0',delay:400},
+  {type:'para',id:'cp1',delay:1600},
+  {type:'line',id:'cl1',delay:3200},
+  {type:'para',id:'cp2',delay:3800},
+  {type:'para',id:'cp3',delay:5800},
+  {type:'line',id:'cl2',delay:7600},
+  {type:'para',id:'cp4',delay:8200},
+  {type:'para',id:'cp5',delay:10200},
+  {type:'line',id:'cl3',delay:12000},
+  {type:'para',id:'cp6',delay:12600},
+  {type:'para',id:'cp7',delay:14000},
+  {type:'para',id:'cp8',delay:15800},
+  {type:'badge',id:'cbadge',delay:17200},
+  {type:'hint',id:'scroll-hint',delay:18800}
+];
+
+function startClosingAnim(){
+  goPage(4);
+  document.getElementById('closing-screen').classList.add('active');
+  document.getElementById('final-content').classList.remove('show');
+  closingSequence.forEach(item=>{
+    const el=document.getElementById(item.id);
+    if(el) el.classList.remove('visible','show');
+  });
+  closingSequence.forEach(item=>{
+    setTimeout(()=>{
+      const el=document.getElementById(item.id);
+      if(!el) return;
+      el.classList.add('visible');
+      if(item.type==='hint') el.classList.add('show');
+      if(item.id==='cp7'||item.id==='cbadge'){
+        for(let i=0;i<3;i++) setTimeout(spawnHeart,i*200);
+      }
+      el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },item.delay);
+  });
+  setTimeout(()=>{
+    showToast('🩷 Scroll down to see more...');
+    setTimeout(()=>{
+      document.getElementById('closing-screen').classList.remove('active');
+      document.getElementById('closing-screen').style.display='none';
+      document.getElementById('final-content').classList.add('show');
+      for(let i=0;i<5;i++) setTimeout(spawnHeart,i*150);
+      showToast('🩷 Forever & Always');
+    },5000);
+  },20000);
+}
+
+/* ══ TOAST ══ */
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  clearTimeout(toastTimer);
+  t.textContent=msg;
+  t.classList.add('show');
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ══ TOUCH SWIPE ══ */
+let touchStartX=0;
+document.addEventListener('touchstart',e=>touchStartX=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{
+  const diff=touchStartX-e.changedTouches[0].clientX;
+  if(document.getElementById('page3').classList.contains('active')){
+    if(diff>40) nextImg();
+    else if(diff<-40) prevImg();
+  }
+},{passive:true});
+
+/* ══ KEYBOARD ══ */
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('page3').classList.contains('active')) return;
+  if(e.key==='ArrowRight') nextImg();
+  if(e.key==='ArrowLeft') prevImg();
+});
+
+/* ══ PARALLAX — FIXED: pakai data-x/y, bukan numpuk transform ══ */
+let parallaxBase=[];
+document.addEventListener('DOMContentLoaded',()=>{
+  const flowers=document.querySelectorAll('#page1 .flower');
+  flowers.forEach((f,i)=>{
+    parallaxBase.push({el:f, lean:parseFloat(f.style.getPropertyValue('--lean')||3)});
+  });
+});
+
+document.addEventListener('mousemove',e=>{
+  if(!document.getElementById('page1').classList.contains('active')) return;
+  const cx=(e.clientX/innerWidth-0.5)*2;
+  const cy=(e.clientY/innerHeight-0.5)*2;
+  parallaxBase.forEach((item,i)=>{
+    const depth=0.3+i*0.15;
+    // FIXED: set sebagai CSS var, bukan append transform
+    item.el.style.setProperty('--px', cx*depth*5+'px');
+    item.el.style.setProperty('--py', cy*depth*3+'px');
+    item.el.style.marginLeft=cx*depth*5+'px';
+    item.el.style.marginTop=cy*depth*3+'px';
+  });
+});
+
+/* ══ ENVELOPE CLICK ══ */
+document.getElementById('cover-env').addEventListener('click',()=>{
+  const el=document.getElementById('cover-env');
+  el.style.transform='scale(1.4)';
+  setTimeout(()=>{ el.style.transform=''; },300);
+  for(let i=0;i<3;i++) setTimeout(spawnHeart,i*100);
+});
+</script>
+</body>
+</html>
+ENDOFFILE
+echo "done"
