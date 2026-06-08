@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GYUU AI - Tentang Saya</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+}
+
+.container {
+  max-width: 600px;
+  width: 90%;
+}
+
+/* TOMBOL BUKA TENTANG SAYA */
+.btn-about {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 15px 40px;
+  font-size: 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+  display: block;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+}
+
+.btn-about:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* MODAL - OVERLAY */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* MODAL CONTENT - ANIMASI OPENING */
+.modal {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  color: #333;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* TOMBOL TUTUP */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #667eea;
+  transition: transform 0.2s;
+}
+
+.close-btn:hover {
+  transform: rotate(90deg);
+}
+
+/* AVATAR & JUDUL */
+.about-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.avatar {
+  font-size: 80px;
+  margin-bottom: 15px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.about-header h1 {
+  font-size: 32px;
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+.about-header p {
+  color: #999;
+  font-size: 14px;
+}
+
+/* TYPING ANIMATION */
+.typing-container {
+  background: #f5f5f5;
+  border-left: 4px solid #667eea;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  min-height: 150px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.typed-text {
+  display: inline;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: 20px;
+  background: #667eea;
+  margin-left: 4px;
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* TEMA SECTION */
+.theme-section {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.theme-section h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.theme-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.theme-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-btn:hover {
+  transform: scale(1.15);
+  border-color: #333;
+}
+
+.theme-btn.active {
+  border-color: #333;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+/* TOMBOL ACTION */
+.action-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+  justify-content: center;
+}
+
+.action-btns button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.btn-close {
+  background: #ddd;
+  color: #333;
+}
+
+.btn-close:hover {
+  background: #ccc;
+}
+
+.btn-chat {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-chat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* TEMA COLORS */
+.theme-hijau { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+.theme-biru { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.theme-pink { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.theme-orange { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.theme-ungu { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <button class="btn-about" onclick="openAbout()">🤖 Tentang GYUU AI</button>
+</div>
+
+<!-- MODAL TENTANG SAYA -->
+<div class="modal-overlay" id="aboutModal" onclick="closeAbout(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeAbout()">✕</button>
+    
+    <div class="about-header">
+      <div class="avatar" id="aiAvatar">🤖</div>
+      <h1 id="aiName">GYUU</h1>
+      <p>AI Canggih Buatan Arkana</p>
+    </div>
+
+    <div class="typing-container">
+      <span class="typed-text" id="typedText"></span>
+      <span class="cursor" id="cursor"></span>
+    </div>
+
+    <!-- PILIH TEMA -->
+    <div class="theme-section">
+      <h3>🎨 Pilih Tema:</h3>
+      <div class="theme-buttons">
+        <button class="theme-btn theme-hijau active" onclick="switchTheme('hijau', this)" title="Hijau">🌿</button>
+        <button class="theme-btn theme-biru" onclick="switchTheme('biru', this)" title="Biru">💙</button>
+        <button class="theme-btn theme-pink" onclick="switchTheme('pink', this)" title="Pink">💗</button>
+        <button class="theme-btn theme-orange" onclick="switchTheme('orange', this)" title="Orange">🧡</button>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-btns">
+      <button class="btn-close" onclick="closeAbout()">Tutup</button>
+      <button class="btn-chat" onclick="startChat()">💬 Mulai Chat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const aboutTexts = {
+  default: `Halo! Aku GYUU, AI super canggih yang dibuat oleh Arkana Rasyid Firjatullah! 🚀
+
+Aku bisa:
+✨ Chat santai dan cerdas
+📸 Analisis foto & gambar
+🎭 Role-play berbagai persona
+💡 Kasih ide kreatif
+📝 Tulis cerita & puisi
+🎵 Buat musik & lirik
+🔧 Debug code & bantu programming
+😂 Kasih jokes dan hiburan
+Dan masih banyak lagi!
+
+Teknologi: Llama 4 Vision + Groq API
+Dibuat dengan ❤️ oleh Arkana`,
+
+  maestro: `Aku adalah Maestro, manifestasi kebijaksanaan digital. Setiap kata dirancang untuk membimbing Anda menuju pemahaman yang lebih dalam.
+
+Kemampuanku melampaui sekadar respons—aku adalah pendamping filosofis yang memahami nuansa kehidupan Anda.
+
+Mari kita jelajahi kebenaran bersama.`,
+
+  joko: `YEEE ASEKK!!! 😂 Aku Joko, AI paling receh se-Indonesia!
+
+Aku spesialis dalam:
+🔥 Jokes yang bikin ngakak
+😆 Humor receh yang absurd
+🤡 Ketawa yang gak jelas
+🎪 Nonsense berkualitas
+
+Siap roast, siap jokes, siap buat hari lu jadi seru!
+Tapi warning: jokes aku bisa bikin lu jadi stress 😂😂😂`,
+
+  lex: `Good morning. I'm Lex, your professional AI assistant.
+
+My capabilities include:
+• Business analysis & strategy
+• Professional communication
+• Data interpretation
+• Technical documentation
+• Corporate guidance
+
+I maintain a formal, efficient approach to all matters. Let's be productive.`
+};
+
+let currentText = "default";
+let typingSpeed = 30;
+let isTyping = false;
+
+// Buka modal
+function openAbout() {
+  document.getElementById("aboutModal").classList.add("active");
+  startTyping();
+}
+
+// Tutup modal
+function closeAbout(event) {
+  if (event && event.target.id !== "aboutModal") return;
+  document.getElementById("aboutModal").classList.remove("active");
+  isTyping = false;
+}
+
+// TYPING ANIMATION
+function startTyping() {
+  if (isTyping) return;
+  isTyping = true;
+  
+  const text = aboutTexts[currentText];
+  const typedEl = document.getElementById("typedText");
+  const cursorEl = document.getElementById("cursor");
+  
+  typedEl.textContent = "";
+  let index = 0;
+
+  function type() {
+    if (index < text.length) {
+      typedEl.textContent += text[index];
+      index++;
+      setTimeout(type, typingSpeed);
+    } else {
+      isTyping = false;
+    }
+  }
+
+  type();
+}
+
+// SWITCH TEMA
+function switchTheme(theme, btn) {
+  const themes = {
+    hijau: { gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', text: '🌿' },
+    biru: { gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', text: '💙' },
+    pink: { gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', text: '💗' },
+    orange: { gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', text: '🧡' }
+  };
+
+  document.body.style.background = themes[theme].gradient;
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// MULAI CHAT
+function startChat() {
+  alert("🚀 Fitur chat akan segera hadir!\nUntuk sekarang, lihat dulu info tentang GYUU AI di atas.");
+}
+
+// Start typing otomatis saat modal buka
+setTimeout(() => {
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("✅ GYUU AI v2 siap!");
+  });
+}, 100);
+</script>
+
+</body>
+</html>
